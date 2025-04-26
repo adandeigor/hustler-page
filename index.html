@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Igor ADANDE - Analyste Programmeur</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+  <style>
+    body { background: #0a0a0f; color: #e2e8f0; font-family: 'Inter', sans-serif; margin: 0; }
+    .section { padding: 4rem 2rem; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+
+    /* Animations */
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .glow:hover { text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88; }
+    .hover-scale { transition: transform 0.3s; }
+    .hover-scale:hover { transform: scale(1.05); }
+    .hover-lift { transition: transform 0.3s, box-shadow 0.3s; }
+    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3); }
+    .pulse { transition: transform 0.2s; }
+    .pulse:hover { transform: scale(1.1); animation: pulse 1s infinite; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+    /* Scan Effect */
+    .scan { position: relative; overflow: hidden; }
+    .scan::after {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.2), transparent);
+      animation: scan 4s infinite;
+    }
+    @keyframes scan { 0% { left: -100%; } 50% { left: 100%; } 100% { left: 100%; } }
+
+    /* Glitch Effect */
+    .glitch { position: relative; }
+    .glitch:hover::before, .glitch:hover::after {
+      content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    }
+    .glitch:hover::before { color: #bb33ff; left: 2px; animation: glitch 0.3s infinite; }
+    .glitch:hover::after { color: #00ff88; left: -2px; animation: glitch 0.3s infinite reverse; }
+    @keyframes glitch { 0% { clip-path: inset(0 0 90% 0); } 50% { clip-path: inset(10% 0 80% 0); } 100% { clip-path: inset(20% 0 70% 0); } }
+
+    /* Typing Cursor */
+    .typing-cursor::after { content: '|'; animation: blink 0.8s infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Hologram Effect */
+    .hologram { filter: brightness(1.2) contrast(1.5); animation: hologram 2s infinite; }
+    @keyframes hologram { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
+
+    /* Timeline */
+    .timeline::before {
+      content: ''; position: absolute; left: 1.5rem; top: 0; height: 100%; width: 4px;
+      background: linear-gradient(#00ff88, #bb33ff);
+    }
+    .timeline-item { position: relative; padding-left: 3rem; margin-bottom: 2rem; }
+    .timeline-item::before {
+      content: ''; position: absolute; left: 1rem; top: 0; width: 16px; height: 16px;
+      background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88;
+    }
+
+    /* Carousel */
+    .carousel { overflow: hidden; position: relative; }
+    .carousel-inner { display: flex; transition: transform 0.5s; }
+    .carousel-item { flex: 0 0 100%; padding: 1rem; }
+
+    /* Tooltip */
+    .tooltip { position: relative; }
+    .tooltip:hover::after {
+      content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+      background: #2a2a2a; color: #e2e8f0; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem;
+      white-space: nowrap; z-index: 10;
+    }
+
+    /* Zoom Effect */
+    .zoom { overflow: hidden; }
+    .zoom img { transition: transform 0.3s; }
+    .zoom:hover img { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="relative">
+    <!-- Hero Section -->
+    <section class="section text-center">
+      <div class="container">
+        <h1 id="typing" class="text-4xl md:text-5xl font-bold text-green-400 glow typing-cursor"></h1>
+        <p id="subtitle" class="text-lg md:text-xl mt-2 text-gray-300 typing-cursor"></p>
+        <a href="#about" class="mt-6 inline-block bg-green-500 hover:bg-green-600 text-black font-bold py-3 px-6 rounded-lg hover-scale">
+          <i class="fas fa-code mr-2"></i> Mes projets
+        </a>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section bg-gray-800 bg-opacity-90">
+      <div class="container fade-in scan">
+        <div class="flex flex-col items-center">
+          <i class="fas fa-laptop-code text-4xl text-green-400 mb-4 hologram"></i>
+          <h2 class="text-3xl font-bold text-green-400 mb-6">À propos</h2>
+        </div>
+        <p class="text-base text-gray-300">
+          Je suis Igor ADANDE, analyste programmeur qui transforme les défis tech en solutions qui claquent. Full-stack, data, optimisation : je code avec précision et une touche de créativité. Mon but ? Livrer des projets qui impressionnent et fonctionnent à la perfection.
+        </p>
+        <p class="text-base text-gray-300 mt-4">
+          JavaScript, Python, React, Node.js, SQL, et une soif d’innovation. Prêt à coder votre prochaine grande idée ? Let’s make it happen !
+        </p>
+      </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="section">
+      <div class="container fade-in">
+        <h2 class="text-3xl font-bold text-green-400 mb-6"><i class="fas fa-briefcase mr-2"></i> Expérience</h2>
+        <div class="timeline relative">
+          <div class="timeline-item">
+            <h3 class="text-xl font-semibold text-green-400">Analyste Programmeur @ TechCorp</h3>
+            <p class="text-sm text-gray-400">2022 - Présent</p>
+            <p class="text-base text-gray-300 mt-2">
+              Développement d’applications web full-stack, optimisation de bases de données, et automatisation de processus métier.
+            </p>
+          </div>
+          <div class="timeline-item">
+            <h3 class="text-xl font-semibold text-green-400">Développeur Junior @ DataSolutions</h3>
+            <p class="text-sm text-gray-400">2020 - 2022</p>
+            <p class="text-base text-gray-300 mt-2">
+              Création de scripts Python pour l’analyse de données et intégration d’API REST dans des applications internes.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section bg-gray-800 bg-opacity-90">
+      <div class="container fade-in relative">
+        <h2 class="text-3xl font-bold text-green-400 mb-6"><i class="fas fa-tools mr-2"></i> Compétences</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="p-4 bg-gray-900 rounded-lg text-center pulse tooltip" data-tooltip="Expert en ES6+, frameworks modernes">
+            <i class="fab fa-js text-green-400 text-2xl mb-2"></i>
+            <span class="text-base text-gray-300">JavaScript</span>
+          </div>
+          <div class="p-4 bg-gray-900 rounded-lg text-center pulse tooltip" data-tooltip="Automatisation, scripts, data analysis">
+            <i class="fab fa-python text-green-400 text-2xl mb-2"></i>
+            <span class="text-base text-gray-300">Python</span>
+          </div>
+          <div class="p-4 bg-gray-900 rounded-lg text-center pulse tooltip" data-tooltip="Interfaces dynamiques, SPA">
+            <i class="fab fa-react text-green-400 text-2xl mb-2"></i>
+            <span class="text-base text-gray-300">React</span>
+          </div>
+          <div class="p-4 bg-gray-900 rounded-lg text-center pulse tooltip" data-tooltip="Backend robuste, API REST">
+            <i class="fab fa-node-js text-green-400 text-2xl mb-2"></i>
+            <span class="text-base text-gray-300">Node.js</span>
+          </div>
+          <div class="p-4 bg-gray-900 rounded-lg text-center pulse tooltip" data-tooltip="Requêtes complexes, optimisation">
+            <i class="fas fa-database text-green-400 text-2xl mb-2"></i>
+            <span class="text-base text-gray-300">SQL</span>
+          </div>
+          <div class="p-4 bg-gray-900 rounded-lg text-center pulse tooltip" data-tooltip="Versioning, workflows Git">
+            <i class="fab fa-git-alt text-green-400 text-2xl mb-2"></i>
+            <span class="text-base text-gray-300">Git</span>
+          </div>
+          <div class="p-4 bg-gray-900 rounded-lg text-center pulse tooltip" data-tooltip="Cloud, déploiement, scaling">
+            <i class="fab fa-aws text-green-400 text-2xl mb-2"></i>
+            <span class="text-base text-gray-300">AWS</span>
+          </div>
+          <div class="p-4 bg-gray-900 rounded-lg text-center pulse tooltip" data-tooltip="Conteneurs, microservices">
+            <i class="fab fa-docker text-green-400 text-2xl mb-2"></i>
+            <span class="text-base text-gray-300">Docker</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+      <div class="container fade-in">
+        <h2 class="text-3xl font-bold text-green-400 mb-6"><i class="fas fa-project-diagram mr-2"></i> Projets</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="p-6 bg-gray-900 rounded-lg hover-lift zoom" data-tilt data-tilt-max="10" data-tilt-speed="400">
+            <img src="https://i.pinimg.com/736x/32/59/16/325916e52df6e032c95f561275fd911f.jpg" class="w-full h-32 object-cover rounded mb-4" alt="CRM Project">
+            <h3 class="text-xl font-semibold text-green-400"><i class="fas fa-desktop mr-2"></i> CRM Personnalisé</h3>
+            <p class="text-gray-300 mt-2 text-sm">
+              Application web React/Node.js pour gérer les relations clients. Tableaux de bord analytiques et UX intuitive.
+            </p>
+            <a href="#" class="text-violet-400 mt-2 inline-block text-sm">Voir le projet</a>
+          </div>
+          <div class="p-6 bg-gray-900 rounded-lg hover-lift zoom" data-tilt data-tilt-max="10" data-tilt-speed="400">
+            <img src="https://i.pinimg.com/736x/c6/95/12/c69512a89636e7fa08abe2b344d8364a.jpg" class="w-full h-32 object-cover rounded mb-4" alt="Scraping Project">
+            <h3 class="text-xl font-semibold text-green-400"><i class="fas fa-chart-line mr-2"></i> Outil de Scraping</h3>
+            <p class="text-gray-300 mt-2 text-sm">
+              Script Python pour extraire des données e-commerce, stockées en MongoDB, avec visualisations Power BI.
+            </p>
+            <a href="#" class="text-violet-400 mt-2 inline-block text-sm">Voir le projet</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="section bg-gray-800 bg-opacity-90">
+      <div class="container fade-in">
+        <h2 class="text-3xl font-bold text-green-400 mb-6"><i class="fas fa-quote-left mr-2"></i> Témoignages</h2>
+        <div class="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item">
+              <p class="text-base text-gray-300 italic">
+                “Igor a livré une application robuste et intuitive, dépassant nos attentes. Un vrai pro !”
+              </p>
+              <p class="text-sm text-violet-400 mt-2">– Client fictif, TechCorp</p>
+            </div>
+            <div class="carousel-item">
+              <p class="text-base text-gray-300 italic">
+                “Son expertise en automatisation nous a fait gagner des heures. Collaboration au top.”
+              </p>
+              <p class="text-sm text-violet-400 mt-2">– Collègue fictif, DataSolutions</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="section">
+      <div class="container fade-in">
+        <h2 class="text-3xl font-bold text-green-400 mb-6"><i class="fas fa-blog mr-2"></i> Insights Tech</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="p-6 bg-gray-900 rounded-lg hover-lift">
+            <h3 class="text-xl font-semibold text-green-400">Optimiser ses API REST</h3>
+            <p class="text-gray-300 mt-2 text-sm">
+              Comment structurer des endpoints performants avec Node.js et Express.
+            </p>
+            <a href="#" class="text-violet-400 mt-2 inline-block text-sm">Lire l’article</a>
+          </div>
+          <div class="p-6 bg-gray-900 rounded-lg hover-lift">
+            <h3 class="text-xl font-semibold text-green-400">Python pour le Data Scraping</h3>
+            <p class="text-gray-300 mt-2 text-sm">
+              Les meilleures bibliothèques pour extraire des données web en 2025.
+            </p>
+            <a href="#" class="text-violet-400 mt-2 inline-block text-sm">Lire l’article</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section bg-gray-800 bg-opacity-90">
+      <div class="container fade-in">
+        <h2 class="text-3xl font-bold text-green-400 mb-6"><i class="fas fa-envelope mr-2"></i> Contact</h2>
+        <p class="text-base text-gray-300 mb-4">Un projet à coder ? Let’s talk !</p>
+        <div class="flex flex-col md:flex-row gap-4">
+          <input type="text" placeholder="Nom" class="p-3 bg-gray-900 text-white rounded-lg w-full text-sm focus:ring-2 focus:ring-green-400" />
+          <input type="email" placeholder="Email" class="p-3 bg-gray-900 text-white rounded-lg w-full text-sm focus:ring-2 focus:ring-green-400" />
+        </div>
+        <textarea placeholder="Message" class="p-3 bg-gray-900 text-white rounded-lg w-full mt-4 text-sm focus:ring-2 focus:ring-green-400" rows="4"></textarea>
+        <button class="mt-4 bg-green-500 hover:bg-green-600 text-black font-bold py-3 px-6 rounded-lg text-sm glitch hover-scale" data-text="Envoyer">
+          <i class="fas fa-paper-plane mr-2"></i> Envoyer
+        </button>
+        <div class="mt-6 flex gap-4 justify-center">
+          <a href="https://github.com/adandeigor" class="text-violet-400 text-sm"><i class="fab fa-github mr-1"></i> GitHub</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Typing Effect
+    function initTyping() {
+      try {
+        const title = document.getElementById('typing');
+        const subtitle = document.getElementById('subtitle');
+        const titleText = 'Igor ADANDE';
+        const subtitleText = 'Analyste Programmeur | Code précis, solutions futuristes';
+        let index = 0;
+
+        function type(element, text, speed, next) {
+          if (index < text.length) {
+            element.textContent = text.slice(0, index + 1);
+            index++;
+            setTimeout(() => type(element, text, speed, next), speed);
+          } else {
+            element.classList.remove('typing-cursor');
+            index = 0;
+            if (next) next();
+          }
+        }
+
+        type(title, titleText, 100, () => type(subtitle, subtitleText, 50));
+      } catch (e) {
+        console.error("Typing effect error:", e);
+      }
+    }
+
+    // Connected Particles (Matrix Style)
+    function initParticles() {
+      try {
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        for (let i = 0; i < 80; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: (Math.random() - 0.5) * 0.8,
+            radius: Math.random() * 2 + 1,
+            char: String.fromCharCode(33 + Math.floor(Math.random() * 94))
+          });
+        }
+
+        let mouse = { x: null, y: null };
+        canvas.addEventListener('mousemove', (e) => {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        });
+
+        function animate() {
+          try {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 255, 136, 0.6)';
+            ctx.font = '12px monospace';
+            particles.forEach(p => {
+              p.x += p.vx;
+              p.y += p.vy;
+              if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+              if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+              ctx.fillText(p.char, p.x, p.y);
+              // Connect particles
+              particles.forEach(p2 => {
+                const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                if (dist < 100) {
+                  ctx.strokeStyle = `rgba(0, 255, 136, ${1 - dist / 100})`;
+                  ctx.beginPath();
+                  ctx.moveTo(p.x, p.y);
+                  ctx.lineTo(p2.x, p2.y);
+                  ctx.stroke();
+                }
+              });
+              // React to mouse
+              if (mouse.x && Math.hypot(p.x - mouse.x, p.y - mouse.y) < 100) {
+                p.vx += (p.x - mouse.x) * 0.02;
+                p.vy += (p.y - mouse.y) * 0.02;
+              }
+            });
+            requestAnimationFrame(animate);
+          } catch (e) {
+            console.error("Particles animation error:", e);
+          }
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        });
+      } catch (e) {
+        console.error("Particles initialization failed:", e);
+      }
+    }
+
+    // Carousel
+    function initCarousel() {
+      try {
+        const inner = document.querySelector('.carousel-inner');
+        const items = document.querySelectorAll('.carousel-item');
+        let index = 0;
+
+        function slide() {
+          index = (index + 1) % items.length;
+          inner.style.transform = `translateX(-${index * 100}%)`;
+          setTimeout(slide, 5000);
+        }
+        slide();
+      } catch (e) {
+        console.error("Carousel error:", e);
+      }
+    }
+
+    // Scroll Animation
+    function initScrollAnimations() {
+      try {
+        const sections = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        }, { threshold: 0.2 });
+        sections.forEach(section => observer.observe(section));
+      } catch (e) {
+        console.error("Scroll animation error:", e);
+      }
+    }
+
+    // Cursor Particles for Contact
+    function initCursorParticles() {
+      try {
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+          input.addEventListener('mousemove', (e) => {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = '4px';
+            particle.style.height = '4px';
+            particle.style.background = '#00ff88';
+            particle.style.borderRadius = '50%';
+            particle.style.left = `${e.clientX}px`;
+            particle.style.top = `${e.clientY}px`;
+            particle.style.opacity = '0.8';
+            document.body.appendChild(particle);
+            setTimeout(() => {
+              particle.style.transition = 'all 0.5s';
+              particle.style.opacity = '0';
+              particle.style.transform = 'translateY(-20px)';
+              setTimeout(() => particle.remove(), 500);
+            }, 50);
+          });
+        });
+      } catch (e) {
+        console.error("Cursor particles error:", e);
+      }
+    }
+
+    // Initialize
+    window.onload = () => {
+      initTyping();
+      initParticles();
+      initCarousel();
+      initScrollAnimations();
+      initCursorParticles();
+      VanillaTilt.init(document.querySelectorAll('[data-tilt]'), { max: 10, speed: 400 });
+    };
+  </script>
+</body>
+</html>
