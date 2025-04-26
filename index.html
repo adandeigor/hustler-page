@@ -252,14 +252,16 @@
       <div class="container fade-in">
         <h2 class="text-3xl font-bold text-green-400 mb-6"><i class="fas fa-envelope mr-2"></i> Contact</h2>
         <p class="text-base text-gray-300 mb-4">Un projet à coder ? Let’s talk !</p>
-        <div class="flex flex-col md:flex-row gap-4">
-          <input type="text" placeholder="Nom" class="p-3 bg-gray-900 text-white rounded-lg w-full text-sm focus:ring-2 focus:ring-green-400" />
-          <input type="email" placeholder="Email" class="p-3 bg-gray-900 text-white rounded-lg w-full text-sm focus:ring-2 focus:ring-green-400" />
-        </div>
-        <textarea placeholder="Message" class="p-3 bg-gray-900 text-white rounded-lg w-full mt-4 text-sm focus:ring-2 focus:ring-green-400" rows="4"></textarea>
-        <button class="mt-4 bg-green-500 hover:bg-green-600 text-black font-bold py-3 px-6 rounded-lg text-sm glitch hover-scale" data-text="Envoyer">
-          <i class="fas fa-paper-plane mr-2"></i> Envoyer
-        </button>
+        <form name="contact" method="POST" netlify>
+          <div class="flex flex-col md:flex-row gap-4">
+            <input type="text" placeholder="Nom" class="p-3 bg-gray-900 text-white rounded-lg w-full text-sm focus:ring-2 focus:ring-green-400" />
+            <input type="email" placeholder="Email" class="p-3 bg-gray-900 text-white rounded-lg w-full text-sm focus:ring-2 focus:ring-green-400" />
+          </div>
+          <textarea placeholder="Message" class="p-3 bg-gray-900 text-white rounded-lg w-full mt-4 text-sm focus:ring-2 focus:ring-green-400" rows="4"></textarea>
+          <button class="mt-4 bg-green-500 hover:bg-green-600 text-black font-bold py-3 px-6 rounded-lg text-sm glitch hover-scale" data-text="Envoyer" type="submit">
+            <i class="fas fa-paper-plane mr-2"></i> Envoyer
+          </button>
+        </form>
         <div class="mt-6 flex gap-4 justify-center">
           <a href="https://github.com/adandeigor" class="text-violet-400 text-sm"><i class="fab fa-github mr-1"></i> GitHub</a>
         </div>
